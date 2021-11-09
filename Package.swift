@@ -17,7 +17,7 @@ let package = Package(
             dependencies: ["TSParser", "TSParserAntlr", "Antlr4"]),
         .target(
             name: "TSParser",
-            dependencies: ["TSParserAntlr", "Antlr4"]),
+            dependencies: ["TSParserAntlr", "Antlr4", "GrammarModels", "Utils", "MiniLexer"]),
         .target(
             name: "TSParserAntlr",
             dependencies: ["Antlr4"]),
@@ -30,6 +30,12 @@ let package = Package(
         .target(
             name: "WriterTargetOutput",
             dependencies: ["Utils"]),
+        .target(
+            name: "GrammarModels",
+            dependencies: ["TSParserAntlr"]),
+        .target(
+            name: "TypeSystem",
+            dependencies: ["SwiftAST", "TSParser", "Utils", "GrammarModels"]),
         .testTarget(
             name: "TS2SwiftTests",
             dependencies: ["TS2Swift"]),
