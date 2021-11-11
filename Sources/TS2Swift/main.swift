@@ -1,13 +1,15 @@
+import Foundation
 import Antlr4
 import TSParserAntlr
+import TSParser
 
 do {
-    let chars = try ANTLRFileStream("/Users/roycao/Desktop/tsTest/examples/Function.ts")
-    let lexer = TypeScriptLexer(chars)
-    let tokens = CommonTokenStream(lexer)
-    let parser = try TypeScriptParser(tokens)
-    parser.setBuildParseTree(true)
-    try parser.expressionSequence()
+    let path = "/Users/roycao/Desktop/tsTest/examples/Function.ts"
+    let url = URL(fileURLWithPath: path)
+    let string = try String(contentsOf: url)
+    let parser = TSParser(string: string, fileName: "/Users/roycao/Desktop/tsTest/examples/Function.ts")
+    try parser.parse()
+    
 } catch {
     print(error)
 }

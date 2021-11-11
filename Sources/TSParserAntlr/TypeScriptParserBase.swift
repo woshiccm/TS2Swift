@@ -1,9 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Roy Cao on 2021/10/29.
-//
 import Antlr4
 
 open class TypeScriptParserBase: Parser {

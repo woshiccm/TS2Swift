@@ -7,6 +7,7 @@ let package = Package(
     name: "TS2Swift",
     dependencies: [
         .package(name: "Antlr4",url: "https://github.com/LuizZak/antlr4-swift.git", from: "4.0.34"),
+        .package(name: "MiniLexer", url: "https://github.com/LuizZak/MiniLexer.git", .exact("0.10.0")),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -16,10 +17,25 @@ let package = Package(
             dependencies: ["TSParser", "TSParserAntlr", "Antlr4"]),
         .target(
             name: "TSParser",
-            dependencies: ["TSParserAntlr", "Antlr4"]),
+            dependencies: ["TSParserAntlr", "Antlr4", "GrammarModels", "Utils", "MiniLexer"]),
         .target(
             name: "TSParserAntlr",
             dependencies: ["Antlr4"]),
+        .target(
+            name: "SwiftAST",
+            dependencies: ["MiniLexer", "Utils", "WriterTargetOutput"]),
+        .target(
+            name: "Utils",
+            dependencies: []),
+        .target(
+            name: "WriterTargetOutput",
+            dependencies: ["Utils"]),
+        .target(
+            name: "GrammarModels",
+            dependencies: ["TSParserAntlr"]),
+        .target(
+            name: "TypeSystem",
+            dependencies: ["SwiftAST", "TSParser", "Utils", "GrammarModels"]),
         .testTarget(
             name: "TS2SwiftTests",
             dependencies: ["TS2Swift"]),
