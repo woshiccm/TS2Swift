@@ -115,7 +115,10 @@ public class TSParser {
             specifiers.append(String(spec))
         }
         
-        if lexer.tokenType(is: .keyword(.void)) {
+        if lexer.tokenType(matches: \.isIdentifier) {
+            var typeName = String(try lexer.advance(matching: \.tokenType.isIdentifier).value)
+            return .struct(typeName)
+        } else if lexer.tokenType(is: .keyword(.void)) {
             lexer.skipToken()
             type = .void
         } else {

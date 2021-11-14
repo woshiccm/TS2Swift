@@ -5,11 +5,13 @@ public final class ExpressionNode: ASTNode {
 }
 
 public final class MethodBody: ASTNode {
-//    public var statements: TSParserAntlr.CompoundStatementContext?
+    public var statements: TypeScriptParser.SourceElementsContext?
+    
+    /// List of comments found within the range of this method body
+    public var comments: [TSComment] = []
     
     public override var shortDescription: String {
-        return ""
-//        statements?.getText() ?? ""
+        return statements?.getText() ?? ""
     }
 }
 

@@ -72,32 +72,77 @@ public class TSParserListener: TypeScriptParserBaseListener {
         guard let body = ctx.functionBody() else {
             return
         }
-        
+                
         guard let signature = ctx.callSignature() else {
             return
         }
         
+        function.addChild(nodeFactory.makeMethodBody(from: body))
+        
         if let typeAnnotation = signature.typeAnnotation() {
             let returnType = typeParser.parseTSType(in: typeAnnotation)
             if let returnType = returnType {
-                let typeNameNode =
-                    TypeNameNode(type: returnType)
-                nodeFactory.updateSourceLocation(for: typeNameNode, with: typeAnnotation)
+                let typeNameNode = TypeNameNode(type: returnType)
                 print(returnType.description)
+                function.addChild(typeNameNode)
             }
-            
         }
         
         if let identifier = ctx.Identifier() {
             print(identifier.getText())
-//            function.addChild(nodeFactory.makeIdentifier(from: identifier))
+            function.addChild(nodeFactory.makeIdentifier(from: identifier))
         }
         
-        if let params = signature.parameterList() {
+        context.pushContext(nodeType: ParameterList.self)
+        defer {
+            context.popContext()
+        }
+        
+        if let paramList = signature.parameterList() {
+            let params = paramList.parameter()
+            for paramContext in params {
+                context.pushContext(nodeType: FunctionParameter.self)
+                defer {
+                    context.popContext()
+                }
+                guard let param = context.currentContextNode(as: FunctionParameter.self) else {
+                    return
+                }
+                if let requiredParam = paramContext.requiredParameter() {
+                    if let identifierOrPattern = requiredParam.identifierOrPattern() {
+                        let identifierNode = nodeFactory.makeIdentifier(from: identifierOrPattern)
+                        param.addChild(identifierNode)
+                    }
+                    
+                    if let typeAnnotation = requiredParam.typeAnnotation() {
+                        if let type = typeParser.parseTSType(in: typeAnnotation) {
+                            let typeNode = TypeNameNode(type: type)
+                            print(type.description)
+                            param.addChild(typeNode)
+                        }
+                    }
+                    print(requiredParam.getText())
+                }
+                
+                if let optionalParam = paramContext.optionalParameter() {
+                    param.isOptional = true
+                    if let identifierOrPattern = optionalParam.identifierOrPattern() {
+                        let identifierNode = nodeFactory.makeIdentifier(from: identifierOrPattern)
+                        param.addChild(identifierNode)
+                    }
+                    
+                    if let typeAnnotation = optionalParam.typeAnnotation() {
+                        if let type = typeParser.parseTSType(in: typeAnnotation) {
+                            let typeNode = TypeNameNode(type: type)
+                            print(type.description)
+                            param.addChild(typeNode)
+                        }
+                    }
+                    print(optionalParam.getText())
+                }
+            }
             
         }
-                
-        
     }
     
     public override func enterFunctionExpression(_ ctx: TypeScriptParser.FunctionExpressionContext) {
@@ -172,9 +217,6 @@ private class GenericParseTreeContextMapper {
         case let .type(_, nodeType, collectComments):
             let node =
                 nodeType.init()
-            
-            nodeFactory.updateSourceLocation(for: node, with: rule)
-            
             context.pushContext(node: node)
             
         case .instance(_, let node):

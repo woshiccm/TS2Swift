@@ -46,6 +46,8 @@ public class FunctionParameter: ASTNode, InitializableNode {
         firstChild()
     }
     
+    public var isOptional: Bool = false
+    
     public required init() {
         super.init()
     }
