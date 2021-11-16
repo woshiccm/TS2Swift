@@ -4,6 +4,10 @@ import GrammarModels
 public class TypeParsing {
     public typealias Parser = TypeScriptParser
     
+    public init() {
+        
+    }
+    
     public func parseTSType(_ source: String) -> TSType? {
         let parser = TSParser(source: StringCodeSource(source: source))
         return try? parser.parseTSType()

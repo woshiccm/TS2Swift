@@ -14,10 +14,13 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "TS2Swift",
-            dependencies: ["TSParser", "TSParserAntlr", "Antlr4"]),
+            dependencies: ["TSParser", "TSParserAntlr", "Antlr4", "TypeSystem", "SwiftRewriterLib"]),
         .target(
             name: "TSParser",
             dependencies: ["TSParserAntlr", "Antlr4", "GrammarModels", "Utils", "MiniLexer"]),
+        .target(
+            name: "Intentions",
+            dependencies: ["SwiftAST", "GrammarModels", "TSParser"]),
         .target(
             name: "TSParserAntlr",
             dependencies: ["Antlr4"]),
@@ -35,7 +38,10 @@ let package = Package(
             dependencies: ["TSParserAntlr"]),
         .target(
             name: "TypeSystem",
-            dependencies: ["SwiftAST", "TSParser", "Utils", "GrammarModels"]),
+            dependencies: ["SwiftAST", "TSParser", "Utils", "Intentions", "GrammarModels"]),
+        .target(
+            name: "SwiftRewriterLib",
+            dependencies: ["Antlr4", "GrammarModels", "SwiftAST", "TSParser", "Utils", "Intentions", "TypeSystem"]),
         .testTarget(
             name: "TS2SwiftTests",
             dependencies: ["TS2Swift"]),
